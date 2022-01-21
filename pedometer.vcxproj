@@ -72,6 +72,7 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Src\bt.c" />
     <ClCompile Include="Core\Src\esp32.c" />
     <ClCompile Include="MDK-ARM\startup_stm32f411xe.s" />
     <ClCompile Include="Core\Src\main.c" />

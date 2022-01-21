@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "esp32.h"
+#include "bt.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -95,23 +96,20 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-	Esp32Init();
-	Esp32BtWaitingConnect();
-	Esp32BtSppSendMode();
-	uint8_t i = 0, j = 0, k;
+	BtInit();
+	uint8_t i = 0;
+	BtDataPack_3AxisAcc acc;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		j = i;
-		do {
-			k = j % 10 + '0';
-			Esp32BtSend(&k, 1);
-			j = j / 10;
-		} while (j);
+		acc.x = i;
+		acc.y = i + 5;
+		acc.z = i + 10;
 		++i;
+		BtSendDatapack_3AxisAcc(&acc);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
