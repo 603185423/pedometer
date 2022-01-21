@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "esp32.h"
 #include "bt.h"
+#include "adxl345.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -96,8 +97,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
+	ADXL345_Init();
 	BtInit();
-	uint8_t i = 0;
+
 	BtDataPack_3AxisAcc acc;
   /* USER CODE END 2 */
 
@@ -105,10 +107,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		acc.x = i;
-		acc.y = i + 5;
-		acc.z = i + 10;
-		++i;
+		ADXL345_RD_XYZ(&(acc.x), &(acc.y), &(acc.z));
 		BtSendDatapack_3AxisAcc(&acc);
     /* USER CODE END WHILE */
 
