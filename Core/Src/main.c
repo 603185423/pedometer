@@ -49,6 +49,7 @@
 
 /* USER CODE BEGIN PV */
 uint8_t i = 0;
+BtDataPack_3AxisAcc acc;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -97,18 +98,19 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
+	HAL_Delay(2000); //wating esp32 init
 	ADXL345_Init();
-	BtInit();
+	//BtInit();
 
-	BtDataPack_3AxisAcc acc;
+	HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		ADXL345_RD_XYZ(&(acc.x), &(acc.y), &(acc.z));
-		BtSendDatapack_3AxisAcc(&acc);
+//		ADXL345_RD_XYZ(&(acc.x), &(acc.y), &(acc.z));
+//		BtSendDatapack_3AxisAcc(&acc);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -164,6 +166,13 @@ void SystemClock_Config(void)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
 	if (UartHandle->Instance == USART1)Esp32RxCallback();
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	if (htim->Instance == htim3.Instance) {
+		ADXL345_RD_XYZ(&(acc.x), &(acc.y), &(acc.z));
+		BtSendDatapack_3AxisAcc(&acc);
+	}
 }
 /* USER CODE END 4 */
 
