@@ -174,5 +174,8 @@
     <ClCompile Include="Core\Src\adxl345.c">
       <Filter>Source files\Application\User\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Src\oled.c">
+      <Filter>Source files\Application\User\Core</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

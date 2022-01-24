@@ -51,8 +51,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint8_t i = 0;
-BtDataPack_3AxisAccWithTotal acc;
+static uint8_t i = 0;
+static BtDataPack_3AxisAccWithTotal acc;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,8 +101,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-	HAL_Delay(2000); //wating esp32 init
+	
 	ADXL345_Init();
+	HAL_Delay(2000); //wating esp32 init
 	BtInit();
 
 	HAL_TIM_Base_Start_IT(&htim3);

@@ -2,7 +2,7 @@
 #include "i2c.h"
 
 
-uint8_t Adxl345ReadBuffer[6];
+static uint8_t Adxl345ReadBuffer[6];
 
 void ADXL345_Write(uint16_t MemAddress, uint8_t data)
 {

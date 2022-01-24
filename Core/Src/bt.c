@@ -1,8 +1,8 @@
 #include "bt.h"
 #include "esp32.h"
 
-uint8_t BtDataBuffer[BT_DATA_BUFFER_SIZE];
-uint8_t bt_i;
+static uint8_t BtDataBuffer[BT_DATA_BUFFER_SIZE];
+static uint8_t bt_i;
 
 void BtSend(uint8_t size)
 {
