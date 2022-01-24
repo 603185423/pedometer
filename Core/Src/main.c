@@ -29,6 +29,7 @@
 #include "esp32.h"
 #include "bt.h"
 #include "adxl345.h"
+#include "oled.h"
 
 #include "math.h"
 /* USER CODE END Includes */
@@ -101,10 +102,13 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-	
+	OLED_Init();
+	OledDisplayLine((uint8_t*)"oled init success");
 	ADXL345_Init();
+	OledDisplayLine((uint8_t*)"adxl345 init success");
 	HAL_Delay(2000); //wating esp32 init
 	BtInit();
+	OledDisplayLine((uint8_t*)"bt init success");
 
 	HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */

@@ -1,6 +1,11 @@
 #include "esp32.h"
 #include <usart.h>
-#define ESP32_BT_DEBUG
+//#define ESP32_BT_DEBUG_USART2
+#define ESP32_BT_DEBUG_OLED
+#ifdef ESP32_BT_DEBUG_OLED
+#include "oled.h"
+#endif // ESP32_BT_DEBUG_OLED
+
 
 enum Esp32BtReceiveState_LBBSB { LBBSB_RECEIVE_START, LBBSB_RECEIVE_CR1, LBBSB_RECEIVE_LF1, LBBSB_RECEIVE_CR2, LBBSB_RECEIVE_LF2, LBBSB_RECEIVE_CR3, LBBSB_RECEIVE_LF3 }esp32BtReceiveState_LBBSB;
 enum Esp32BtReceiveState_SB { SB_RECEIVE_START, SB_RECEIVE_CR1, SB_RECEIVE_LF1 }esp32BtReceiveState_SB;
@@ -25,9 +30,13 @@ void Esp32BlockingReceive(void)
 		;
 	}
 	esp32BtReceiveType = RXNONE;
-#ifdef ESP32_BT_DEBUG
+#ifdef ESP32_BT_DEBUG_USART2
 	HAL_UART_Transmit(&huart2, pEsp32RxBufferRead, pEsp32RxBufferWrite - pEsp32RxBufferRead, ESP32_TIMEOUT_LONGSENT);
-#endif // ESP32_BT_DEBUG
+#endif // ESP32_BT_DEBUG_USART2
+#ifdef ESP32_BT_DEBUG_OLED
+	OledDisplayLine(pEsp32RxBufferRead);
+#endif // ESP32_BT_DEBUG_OLED
+
 }
 
 void Esp32BtRxCalback_LBBSB(void)
@@ -225,10 +234,7 @@ void Esp32BtWaitingConnect(void)
 
 void Esp32BtSppSendMode(void)
 {
-	Esp32Send_BTSPPSEND();
-//	Esp32BtRxStateReset(BS);
-//	Esp32BlockingReceive();
-	
+	Esp32Send_BTSPPSEND();	
 }
 
 void Esp32BtSend(uint8_t *pData, uint8_t size)

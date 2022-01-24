@@ -70,7 +70,7 @@ void OLED_Init(void)
 	{
 		OLED_WR_CMD(CMD_Data[i]);
 	}
-	void OLED_Clear();
+	OLED_Clear();
 }
 
 //开启OLED显示    
@@ -119,7 +119,7 @@ unsigned int oled_pow(uint8_t m, uint8_t n)
 //size:字体大小
 //mode:模式	0,填充模式;1,叠加模式
 //num:数值(0~4294967295);	 		  
-void OLED_ShowNum(uint8_t x, uint8_t y, int num, uint8_t len, uint8_t size2)
+void OLED_ShowNum(uint8_t x, uint8_t y, int num, uint8_t len, OledCharSize size2)
 {         	
 	uint8_t t, temp;
 	uint8_t enshow = 0, flag = 0;	
@@ -155,7 +155,7 @@ void OLED_ShowNum(uint8_t x, uint8_t y, int num, uint8_t len, uint8_t size2)
 //y:0~63
 //mode:0,反白显示;1,正常显示				 
 //size:选择字体 16/12 
-void OLED_ShowChar(uint8_t x, uint8_t y, uint8_t chr, uint8_t Char_Size)
+void OLED_ShowChar(uint8_t x, uint8_t y, uint8_t chr, OledCharSize Char_Size)
 {      	
 	unsigned char c = 0, i = 0;	
 	c = chr - ' '; //得到偏移后的值			
@@ -182,7 +182,7 @@ void OLED_ShowChar(uint8_t x, uint8_t y, uint8_t chr, uint8_t Char_Size)
 }
  
 //显示一个字符号串
-void OLED_ShowString(uint8_t x, uint8_t y, uint8_t *chr, uint8_t Char_Size)
+void OLED_ShowString(uint8_t x, uint8_t y, uint8_t *chr, OledCharSize Char_Size)
 {
 	unsigned char j = 0;
 	while (chr[j] != '\0')
@@ -214,3 +214,10 @@ void OLED_ShowCHinese(uint8_t x, uint8_t y, uint8_t no)
 	}					
 }
 
+void OledDisplayLine(uint8_t *str)
+{
+	static uint8_t lineNum = 0;
+	if (lineNum == OLED_MAX_LINE_8SIZE) lineNum = 0;
+	OLED_ShowString(0, lineNum, str, OLED_CHAR_SIZE8);
+	++lineNum;
+}
