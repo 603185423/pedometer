@@ -2,7 +2,7 @@
 #include "i2c.h"
 
 
-
+uint8_t Adxl345ReadBuffer[6];
 
 void ADXL345_Write(uint16_t MemAddress, uint8_t data)
 {
@@ -24,7 +24,7 @@ uint8_t ADXL345_Init(void) {
 		  	//读器件ID，ADXL345的器件ID为0XE5
 		val = 0x2B; 		//低电平中断输出，13位全分辨率，输出数据右对齐，16g量程
 		HAL_I2C_Mem_Write(&hi2c1, ADXL345_DEV_ADDRESS_WR, ADXL345_REG_DATA_FORMAT, I2C_MEMADD_SIZE_8BIT, &val, 1, 0xFF);
-		val = 0x0A; 		//数据输出速度为100Hz
+		val = 0b00001010; 		//数据输出速度为100Hz
 		HAL_I2C_Mem_Write(&hi2c1, ADXL345_DEV_ADDRESS_WR, ADXL345_REG_BW_RATE, I2C_MEMADD_SIZE_8BIT, &val, 1, 0xFF);
 		val = 0x28; 		//链接使能，测量模式
 		HAL_I2C_Mem_Write(&hi2c1, ADXL345_DEV_ADDRESS_WR, ADXL345_REG_POWER_CTL, I2C_MEMADD_SIZE_8BIT, &val, 1, 0xFF);
@@ -38,15 +38,14 @@ uint8_t ADXL345_Init(void) {
 	return ADXL345_INIT_ERR;	   								  
 } 
 /*读取ADXL345三个轴的数据*/
-void ADXL345_RD_XYZ(short *x, short *y, short *z) {
-	uint8_t buf[6];						  		   
-	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_X0, I2C_MEMADD_SIZE_8BIT, &buf[0], 1, 0xFF);
-	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_X1, I2C_MEMADD_SIZE_8BIT, &buf[1], 1, 0xFF);
-	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_Y0, I2C_MEMADD_SIZE_8BIT, &buf[2], 1, 0xFF);
-	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_Y1, I2C_MEMADD_SIZE_8BIT, &buf[3], 1, 0xFF);
-	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_Z0, I2C_MEMADD_SIZE_8BIT, &buf[4], 1, 0xFF);
-	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_Z1, I2C_MEMADD_SIZE_8BIT, &buf[5], 1, 0xFF);	
-	*x = (short)(((uint16_t)buf[1] << 8) + buf[0]);  	//DATA_X1为高位有效字节    
-	*y = (short)(((uint16_t)buf[3] << 8) + buf[2]);  	//DATA_Y1为高位有效字节  	    
-	*z = (short)(((uint16_t)buf[5] << 8) + buf[4]);  	//DATA_Z1为高位有效字节  	   
+void ADXL345_RD_XYZ(short *x, short *y, short *z) {						  		   
+	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_X0, I2C_MEMADD_SIZE_8BIT, &Adxl345ReadBuffer[0], 1, 0xFF);
+	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_X1, I2C_MEMADD_SIZE_8BIT, &Adxl345ReadBuffer[1], 1, 0xFF);
+	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_Y0, I2C_MEMADD_SIZE_8BIT, &Adxl345ReadBuffer[2], 1, 0xFF);
+	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_Y1, I2C_MEMADD_SIZE_8BIT, &Adxl345ReadBuffer[3], 1, 0xFF);
+	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_Z0, I2C_MEMADD_SIZE_8BIT, &Adxl345ReadBuffer[4], 1, 0xFF);
+	HAL_I2C_Mem_Read(&hi2c1, ADXL345_DEV_ADDRESS_RD, ADXL345_REG_DATA_Z1, I2C_MEMADD_SIZE_8BIT, &Adxl345ReadBuffer[5], 1, 0xFF);	
+	*x = (short)(((uint16_t)Adxl345ReadBuffer[1] << 8) + Adxl345ReadBuffer[0]);  	//DATA_X1为高位有效字节    
+	*y = (short)(((uint16_t)Adxl345ReadBuffer[3] << 8) + Adxl345ReadBuffer[2]);  	//DATA_Y1为高位有效字节  	    
+	*z = (short)(((uint16_t)Adxl345ReadBuffer[5] << 8) + Adxl345ReadBuffer[4]);  	//DATA_Z1为高位有效字节  	   
 }

@@ -14,6 +14,7 @@ extern "C" {
 #define BT_DATA_TAIL 0x5A
 #define BT_DATA_SIZE_STRUCT 3
 #define BT_DATA_SIZE_3AXISACC (BT_DATA_SIZE_STRUCT + 6)
+#define BT_DATA_SIZE_3AXISACCWITHTOTAL (BT_DATA_SIZE_STRUCT + 10)
 	
 	typedef struct
 	{
@@ -21,8 +22,16 @@ extern "C" {
 		short y;
 		short z;
 	}BtDataPack_3AxisAcc;
+	typedef struct
+	{
+		short x;
+		short y;
+		short z;
+		float f;
+	}BtDataPack_3AxisAccWithTotal;
 	
 	void BtSendDatapack_3AxisAcc(BtDataPack_3AxisAcc *pdata_3Acc);
+	void BtSendDatapack_3AxisAccWithTotal(BtDataPack_3AxisAccWithTotal *pdata_3Acc);
 	void BtInit(void);
 	
 	

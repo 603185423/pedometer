@@ -29,6 +29,8 @@
 #include "esp32.h"
 #include "bt.h"
 #include "adxl345.h"
+
+#include "math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -38,6 +40,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define TOTAL_ACC 258
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -49,7 +52,7 @@
 
 /* USER CODE BEGIN PV */
 uint8_t i = 0;
-BtDataPack_3AxisAcc acc;
+BtDataPack_3AxisAccWithTotal acc;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,7 +103,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	HAL_Delay(2000); //wating esp32 init
 	ADXL345_Init();
-	//BtInit();
+	BtInit();
 
 	HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
@@ -171,7 +174,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	if (htim->Instance == htim3.Instance) {
 		ADXL345_RD_XYZ(&(acc.x), &(acc.y), &(acc.z));
-		BtSendDatapack_3AxisAcc(&acc);
+		acc.f = (float)sqrt((double)acc.x*acc.x + (double)acc.y*acc.y + (double)acc.z*acc.z) - TOTAL_ACC;
+		BtSendDatapack_3AxisAccWithTotal(&acc);
 	}
 }
 /* USER CODE END 4 */
