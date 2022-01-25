@@ -180,6 +180,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	if (htim->Instance == htim3.Instance) {
 		ADXL345_RD_XYZ(&(acc.x), &(acc.y), &(acc.z));
 		acc.f = (float)sqrt((double)acc.x*acc.x + (double)acc.y*acc.y + (double)acc.z*acc.z) - TOTAL_ACC;
+		if (BtLoopWaitingConn)return;
 		BtSendDatapack_3AxisAccWithTotal(&acc);
 	}
 }

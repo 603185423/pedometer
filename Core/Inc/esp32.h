@@ -12,6 +12,9 @@ extern "C" {
 #define		ESP32_TIMEOUT_LONGSENT	0x100
 	extern uint8_t esp32RxBuffer[ESP32_RX_BUFFER_SIZE];
 	extern uint8_t rx1Buffer[1];
+	extern uint8_t BtLoopWaiting;
+	extern uint8_t BtLoopWaitingConn;  //0:等待断开，1:等待连接
+	extern enum Esp32BtReceiveType { RXNONE, LBBSB, SB, BS }esp32BtReceiveType;
 	
 	
 	void Esp32RxCallback(void);
@@ -20,6 +23,7 @@ extern "C" {
 	void Esp32BtSppSendMode(void);
 	void Esp32BtSend(uint8_t *pData, uint8_t size);
 	void Esp32BtEnd(void);
+	void Esp32BtRxStateReset(enum Esp32BtReceiveType rxType);
 	
 	
 #ifdef __cplusplus

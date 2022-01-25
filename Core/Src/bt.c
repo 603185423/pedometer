@@ -46,7 +46,10 @@ void BtSendDatapack_3AxisAccWithTotal(BtDataPack_3AxisAccWithTotal *pdata_3Acc)
 void BtInit(void)
 {
 	Esp32Init();
-	Esp32BtWaitingConnect();
-	Esp32BtSppSendMode();
+	// Esp32BtWaitingConnect();
+	// Esp32BtSppSendMode();
+	Esp32BtRxStateReset(SB);
+	BtLoopWaiting = 1;
+	BtLoopWaitingConn = 1;
 }
 

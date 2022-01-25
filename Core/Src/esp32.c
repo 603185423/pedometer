@@ -10,18 +10,35 @@
 enum Esp32BtReceiveState_LBBSB { LBBSB_RECEIVE_START, LBBSB_RECEIVE_CR1, LBBSB_RECEIVE_LF1, LBBSB_RECEIVE_CR2, LBBSB_RECEIVE_LF2, LBBSB_RECEIVE_CR3, LBBSB_RECEIVE_LF3 }esp32BtReceiveState_LBBSB;
 enum Esp32BtReceiveState_SB { SB_RECEIVE_START, SB_RECEIVE_CR1, SB_RECEIVE_LF1 }esp32BtReceiveState_SB;
 enum Esp32BtReceiveState_BS { BS_RECEIVE_START, BS_RECEIVE_CR1, BS_RECEIVE_LF1, BS_RECEIVE_LAB }esp32BtReceiveState_BS;//LAB:left angle brcket
-enum Esp32BtReceiveType { RXNONE, LBBSB, SB, BS }esp32BtReceiveType;
 enum Esp32BtReceiveState { RECEIVE_OK, RECEIVE_BUSY }esp32BtReceiveState;
+enum Esp32BtReceiveType esp32BtReceiveType;
 uint8_t rx1Buffer[1], txEndString[] = "\r\n";
 uint8_t esp32RxBuffer[ESP32_RX_BUFFER_SIZE];
 uint8_t *pEsp32RxBufferWrite = esp32RxBuffer;
 uint8_t *pEsp32RxBufferRead = esp32RxBuffer;
+uint8_t BtLoopWaiting = 0;
+uint8_t BtLoopWaitingConn = 0;//0:等待断开，1:等待连接
 
 
 
 
 uint8_t a = 0;
 
+
+void SetEsp32BtReceiveType(enum Esp32BtReceiveType type)
+{
+	esp32BtReceiveType = type;
+	if (type == LBBSB)esp32BtReceiveState_LBBSB = LBBSB_RECEIVE_START;
+	else if (type == SB)esp32BtReceiveState_SB = SB_RECEIVE_START;
+	else if (type == BS)esp32BtReceiveState_BS = BS_RECEIVE_START;
+}
+
+void Esp32BtRxStateReset(enum Esp32BtReceiveType rxType)
+{
+	SetEsp32BtReceiveType(rxType);
+	esp32BtReceiveState = RECEIVE_BUSY;
+	pEsp32RxBufferWrite = esp32RxBuffer;
+}
 
 void Esp32BlockingReceive(void)
 {
@@ -72,6 +89,25 @@ void Esp32BtRxCalback_SB(void)
 		esp32BtReceiveState_SB = SB_RECEIVE_LF1;
 		*pEsp32RxBufferWrite++ = '\0';
 		esp32BtReceiveState = RECEIVE_OK;
+		if (BtLoopWaiting && BtLoopWaitingConn)
+		{
+			if (*pEsp32RxBufferRead == '+')
+			{
+				Esp32BtSppSendMode();
+				HAL_Delay(300);
+				BtLoopWaitingConn = 0;
+				Esp32BtRxStateReset(SB);
+			}
+		}
+		else if (BtLoopWaiting && (!BtLoopWaitingConn))
+		{
+			if (*pEsp32RxBufferRead == '+')
+			{
+				BtLoopWaitingConn = 1;
+				HAL_Delay(300);
+				Esp32BtRxStateReset(SB);
+			}
+		}
 	}
 	else
 	{
@@ -102,20 +138,6 @@ void Esp32BtRxCalback(void)
 void Esp32RxCallback(void)
 {
 	Esp32BtRxCalback();
-}
-
-void SetEsp32BtReceiveType(enum Esp32BtReceiveType type)
-{
-	esp32BtReceiveType = type;
-	if (type == LBBSB)esp32BtReceiveState_LBBSB = LBBSB_RECEIVE_START;
-	else if (type == SB)esp32BtReceiveState_SB = SB_RECEIVE_START;
-}
-
-void Esp32BtRxStateReset(enum Esp32BtReceiveType rxType)
-{
-	SetEsp32BtReceiveType(rxType);
-	esp32BtReceiveState = RECEIVE_BUSY;
-	pEsp32RxBufferWrite = esp32RxBuffer;
 }
 
 void Esp32ATTransmit(enum Esp32BtReceiveType rxType, uint8_t *pData, uint16_t size)
@@ -203,11 +225,11 @@ void Esp32Send_BTSPPSTART(void)
 void Esp32Send_BTSPPSEND(void)
 {
 	Esp32ATTransmit(LBBSB, (uint8_t*)"AT+BTSPPSEND", 12);
-	Esp32BlockingReceive();
-	if (mstrcmp((uint8_t*)"OK", pEsp32RxBufferRead)) 
-	{
-		Esp32Send_BtInit();
-	}
+//	Esp32BlockingReceive();
+//	if (mstrcmp((uint8_t*)"OK", pEsp32RxBufferRead)) 
+//	{
+//		Esp32Send_BtInit();
+//	}
 }
 
 void Esp32BtInit(void)
@@ -234,7 +256,7 @@ void Esp32BtWaitingConnect(void)
 
 void Esp32BtSppSendMode(void)
 {
-	Esp32Send_BTSPPSEND();	
+	Esp32Send_BTSPPSEND();
 }
 
 void Esp32BtSend(uint8_t *pData, uint8_t size)
