@@ -7,6 +7,7 @@
 #endif // ESP32_BT_DEBUG_OLED
 
 
+enum Esp32BtReceiveState_LBBSBBS { LBBSBBS_RECEIVE_START, LBBSBBS_RECEIVE_CR1, LBBSBBS_RECEIVE_LF1, LBBSBBS_RECEIVE_CR2, LBBSBBS_RECEIVE_LF2, LBBSBBS_RECEIVE_CR3, LBBSBBS_RECEIVE_LF3, LBBSBBS_RECEIVE_CR4, LBBSBBS_RECEIVE_LF4, LBBSBBS_RECEIVE_LAB}esp32BtReceiveState_LBBSBBS;
 enum Esp32BtReceiveState_LBBSB { LBBSB_RECEIVE_START, LBBSB_RECEIVE_CR1, LBBSB_RECEIVE_LF1, LBBSB_RECEIVE_CR2, LBBSB_RECEIVE_LF2, LBBSB_RECEIVE_CR3, LBBSB_RECEIVE_LF3 }esp32BtReceiveState_LBBSB;
 enum Esp32BtReceiveState_SB { SB_RECEIVE_START, SB_RECEIVE_CR1, SB_RECEIVE_LF1 }esp32BtReceiveState_SB;
 enum Esp32BtReceiveState_BS { BS_RECEIVE_START, BS_RECEIVE_CR1, BS_RECEIVE_LF1, BS_RECEIVE_LAB }esp32BtReceiveState_BS;//LAB:left angle brcket
@@ -30,7 +31,7 @@ void SetEsp32BtReceiveType(enum Esp32BtReceiveType type)
 	esp32BtReceiveType = type;
 	if (type == LBBSB)esp32BtReceiveState_LBBSB = LBBSB_RECEIVE_START;
 	else if (type == SB)esp32BtReceiveState_SB = SB_RECEIVE_START;
-	else if (type == BS)esp32BtReceiveState_BS = BS_RECEIVE_START;
+	else if (type == LBBSBBS)esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_START;
 }
 
 void Esp32BtRxStateReset(enum Esp32BtReceiveType rxType)
@@ -94,9 +95,6 @@ void Esp32BtRxCalback_SB(void)
 			if (*pEsp32RxBufferRead == '+')
 			{
 				Esp32BtSppSendMode();
-				HAL_Delay(300);
-				BtLoopWaitingConn = 0;
-				Esp32BtRxStateReset(SB);
 			}
 		}
 		else if (BtLoopWaiting && (!BtLoopWaitingConn))
@@ -104,7 +102,6 @@ void Esp32BtRxCalback_SB(void)
 			if (*pEsp32RxBufferRead == '+')
 			{
 				BtLoopWaitingConn = 1;
-				HAL_Delay(300);
 				Esp32BtRxStateReset(SB);
 			}
 		}
@@ -115,16 +112,34 @@ void Esp32BtRxCalback_SB(void)
 	}
 }
 
-void Esp32BtRxCalback_BS(void)
+void Esp32BtRxCalback_LBBSBBS(void)
 {
-	if (rx1Buffer[0] == '\r' && esp32BtReceiveState_BS == BS_RECEIVE_START) esp32BtReceiveState_BS = BS_RECEIVE_CR1;
-	else if (rx1Buffer[0] == '\n' && esp32BtReceiveState_BS == BS_RECEIVE_CR1) esp32BtReceiveState_BS = BS_RECEIVE_LF1;
-	else if (rx1Buffer[0] == '>' && esp32BtReceiveState_BS == BS_RECEIVE_LF1)
+	if (rx1Buffer[0] == '\r')
 	{
-		esp32BtReceiveState_BS = BS_RECEIVE_LAB;
-		*pEsp32RxBufferWrite++ = rx1Buffer[0];
-		*pEsp32RxBufferWrite++ = '\0';
-		esp32BtReceiveState = RECEIVE_OK;
+		if (esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_START) esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_CR1;
+		else if (esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_LF1) esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_CR2;
+		else if (esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_LF2) esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_CR3;
+		else if (esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_LF3) esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_CR4;
+	}
+	else if (rx1Buffer[0] == '\n')
+	{
+		if (esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_CR1) esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_LF1;
+		else if (esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_CR2) esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_LF2;
+		else if (esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_CR3) esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_LF3;
+		else if (esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_CR4) esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_LF4;
+	}
+	else
+	{
+		if (esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_LF2) *pEsp32RxBufferWrite++ = rx1Buffer[0];
+		else if(esp32BtReceiveState_LBBSBBS == LBBSBBS_RECEIVE_LF4)
+		{
+			esp32BtReceiveState_LBBSBBS = LBBSBBS_RECEIVE_LAB;
+			*pEsp32RxBufferWrite++ = rx1Buffer[0];
+			*pEsp32RxBufferWrite++ = '\0';
+			esp32BtReceiveState = RECEIVE_OK;
+			BtLoopWaitingConn = 0;
+			Esp32BtRxStateReset(SB);
+		}
 	}
 }
 
@@ -132,7 +147,7 @@ void Esp32BtRxCalback(void)
 {
 	if (esp32BtReceiveType == LBBSB)Esp32BtRxCalback_LBBSB();
 	else if (esp32BtReceiveType == SB)Esp32BtRxCalback_SB();
-	else if (esp32BtReceiveType == BS)Esp32BtRxCalback_BS();
+	else if (esp32BtReceiveType == LBBSBBS)Esp32BtRxCalback_LBBSBBS();
 }
 
 void Esp32RxCallback(void)
@@ -224,7 +239,7 @@ void Esp32Send_BTSPPSTART(void)
 
 void Esp32Send_BTSPPSEND(void)
 {
-	Esp32ATTransmit(LBBSB, (uint8_t*)"AT+BTSPPSEND", 12);
+	Esp32ATTransmit(LBBSBBS, (uint8_t*)"AT+BTSPPSEND", 12);
 //	Esp32BlockingReceive();
 //	if (mstrcmp((uint8_t*)"OK", pEsp32RxBufferRead)) 
 //	{

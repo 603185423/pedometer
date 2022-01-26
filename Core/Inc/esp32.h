@@ -14,7 +14,7 @@ extern "C" {
 	extern uint8_t rx1Buffer[1];
 	extern uint8_t BtLoopWaiting;
 	extern uint8_t BtLoopWaitingConn;  //0:等待断开，1:等待连接
-	extern enum Esp32BtReceiveType { RXNONE, LBBSB, SB, BS }esp32BtReceiveType;
+	extern enum Esp32BtReceiveType { RXNONE, LBBSB, SB, LBBSBBS }esp32BtReceiveType;
 	
 	
 	void Esp32RxCallback(void);
