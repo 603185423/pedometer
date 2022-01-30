@@ -4,9 +4,9 @@
 static uint8_t BtDataBuffer[BT_DATA_BUFFER_SIZE];
 static uint8_t bt_i;
 
-void BtSend(uint8_t size)
+void BtSend(uint16_t size)
 {
-	Esp32BtSend(BtDataBuffer, size);
+	Esp32Send(BtDataBuffer, size);
 }
 
 void BtCheckSum(uint8_t size)

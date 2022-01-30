@@ -12,14 +12,15 @@ extern "C" {
 #define		ESP32_TIMEOUT_LONGSENT	0x100
 	extern uint8_t esp32RxBuffer[ESP32_RX_BUFFER_SIZE];
 	extern uint8_t rx1Buffer[1];
+	extern enum Esp32WirelessUse{USE_BLUETOOTH, USE_WIFI}esp32WirelessUse;
 	
 	
 	void Esp32RxCallback(void);
 	void Esp32Init(void);
 	void Esp32BtWaitingConnect(void);
 	void Esp32BtSppSendMode(void);
-	void Esp32BtSend(uint8_t *pData, uint8_t size);
-	void Esp32BtEnd(void);
+	void Esp32Send(uint8_t *pData, uint16_t size);
+	void Esp32End(void);
 	
 	
 #ifdef __cplusplus

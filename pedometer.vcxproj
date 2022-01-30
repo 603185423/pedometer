@@ -76,6 +76,7 @@
     <ClCompile Include="Core\Src\bt.c" />
     <ClCompile Include="Core\Src\esp32.c" />
     <ClCompile Include="Core\Src\oled.c" />
+    <ClCompile Include="Core\Src\wifi.c" />
     <ClCompile Include="MDK-ARM\startup_stm32f411xe.s" />
     <ClCompile Include="Core\Src\main.c" />
     <ClCompile Include="Core\Src\gpio.c" />
