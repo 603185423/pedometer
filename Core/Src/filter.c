@@ -1,22 +1,74 @@
 #include "filter.h"
-#include "arm_math.h"
-#include "main.h"
 
-void arm_biquad_cascade_df1_f32(
-  const arm_biquad_casd_df1_inst_f32 * S,
-	float32_t * pSrc,
-	float32_t * pDst,
-	uint32_t blockSize)
+
+
+#define USE_DF1_F32_2SEC
+
+#ifdef USE_DF1_F32_2SEC
+/******************************************
+ * 离散时间 IIR 滤波器(实数)
+ * 滤波器结构  : 直接 II 型，二阶节
+ * 节数     : 2 
+ * 稳定     : 是 
+ * 线性相位   : 否
+ * 
+ * SOS 矩阵:
+ * 1  0  -1  1  -1.957389039542623443423963180975988507271  0.958531685182608117479219345113961026073
+ * 1  0  -1  1  -1.628850768574283680578673738637007772923  0.699463477647529030534201410773675888777
+ * 
+ * 定标值:
+ * 0.128770849454770242026313553651561960578 
+ * 0.128770849454770242026313553651561960578  
+ *****************************************/
+#define IIR_SECTION 2
+static float32_t iir_state[4*IIR_SECTION];
+static float32_t iir_coeffs[5*IIR_SECTION] = {
+	0.128770849454770242026313553651561960578, 0, -0.128770849454770242026313553651561960578, 1.957389039542623443423963180975988507271, -0.958531685182608117479219345113961026073,
+	0.128770849454770242026313553651561960578, 0, -0.128770849454770242026313553651561960578, 1.628850768574283680578673738637007772923, -0.699463477647529030534201410773675888777
+};
+static arm_biquad_casd_df1_inst_f32 S;
+typedef void(*pBiquadInit)(arm_biquad_casd_df1_inst_f32*, uint8_t, float32_t*, float32_t*);
+pBiquadInit ArmBiquadInit = arm_biquad_cascade_df1_init_f32;
+
+typedef void(*pFilter)(const arm_biquad_casd_df1_inst_f32*, float32_t*, float32_t*, uint32_t);
+pFilter ArmFilter = arm_biquad_cascade_df1_f32;
+
+#endif // USE_DF1_F32_2SEC
+
+
+
+
+void FilterInit(void)
 {
-	float32_t *pIn = pSrc; /*  source pointer            */
-	float32_t *pOut = pDst; /*  destination pointer       */
-	float32_t *pState = S->pState; /*  pState pointer            */
-	float32_t *pCoeffs = S->pCoeffs; /*  coefficient pointer       */
-	float32_t acc; /*  Simulates the accumulator */
-	float32_t b0, b1, b2, a1, a2; /*  Filter coefficients       */
-	float32_t Xn1, Xn2, Yn1, Yn2; /*  Filter pState variables   */
-	float32_t Xn; /*  temporary input           */
-	uint32_t sample, stage = S->numStages; /*  loop counters             */
+	ArmBiquadInit(&S, IIR_SECTION, iir_coeffs, iir_state);
+}
+
+void Filter(float32_t * pSrc, float32_t * pDst, uint32_t blockSize)
+{
+	ArmFilter(&S, pSrc, pDst,blockSize);
+}
+
+
+
+void arm_biquad_cascade_df1_init_f32(arm_biquad_casd_df1_inst_f32 * S, uint8_t numStages, float32_t * pCoeffs, float32_t * pState)
+{
+	S->numStages = numStages;
+	S->pCoeffs = pCoeffs;
+	memset(pState, 0, (4U * (uint32_t) numStages) * sizeof(float32_t));
+	S->pState = pState;
+}
+
+void arm_biquad_cascade_df1_f32(const arm_biquad_casd_df1_inst_f32 * S, float32_t * pSrc, float32_t * pDst, uint32_t blockSize)
+{
+	float32_t *pIn = pSrc;
+	float32_t *pOut = pDst;
+	float32_t *pState = S->pState;
+	float32_t *pCoeffs = S->pCoeffs;
+	float32_t acc;
+	float32_t b0, b1, b2, a1, a2;
+	float32_t Xn1, Xn2, Yn1, Yn2;
+	float32_t Xn;
+	uint32_t sample, stage = S->numStages;
 
 
 #if defined (ARM_MATH_DSP)

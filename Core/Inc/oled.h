@@ -17,8 +17,6 @@ extern "C" {
 	typedef enum OledCharSize{ OLED_CHAR_SIZE8 = 12, OLED_CHAR_SIZE12 = 16 }OledCharSize;
 
 
-	void OLED_WR_CMD(uint8_t cmd);
-	void OLED_WR_DATA(uint8_t data);
 	void OLED_Init(void);
 	void OLED_Clear(void);
 	void OLED_Display_On(void);

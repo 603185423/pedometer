@@ -31,6 +31,7 @@
 #include "adxl345.h"
 #include "oled.h"
 #include "wifi.h"
+#include "filter.h"
 
 #include "arm_math.h"
 /* USER CODE END Includes */
@@ -54,6 +55,7 @@
 
 /* USER CODE BEGIN PV */
 static uint8_t i = 0;
+static float32_t f = 0;
 static WifiDataPack_3AxisAccWithTotal acc;
 /* USER CODE END PV */
 
@@ -110,6 +112,8 @@ int main(void)
 	HAL_Delay(5000); //wating esp32 init
 	WifiInit();
 	OledDisplayLine((uint8_t*)"bt init success");
+	FilterInit();
+	OLED_Clear();
 
 	HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
@@ -118,8 +122,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	while (1)
 	{
-//		ADXL345_RD_XYZ(&(acc.x), &(acc.y), &(acc.z));
-//		BtSendDatapack_3AxisAcc(&acc);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -181,8 +183,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	if (htim->Instance == htim3.Instance) {
 		ADXL345_RD_XYZ(&(acc.x), &(acc.y), &(acc.z));
 		acc.f = (float)sqrt((double)acc.x*acc.x + (double)acc.y*acc.y + (double)acc.z*acc.z);
-		
-		WifiSendDataPack_MixedAcc(&(acc.f));
+		Filter(&(acc.f), &f, 1);
+		WifiSendDataPack_MixedAcc(&(f));
 	}
 }
 /* USER CODE END 4 */
