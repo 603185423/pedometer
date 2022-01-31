@@ -32,7 +32,7 @@
 #include "oled.h"
 #include "wifi.h"
 
-#include "math.h"
+#include "arm_math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

@@ -42,8 +42,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
-      <AdditionalIncludeDirectories>Core\Inc;Drivers\STM32F4xx_HAL_Driver\Inc;Drivers\STM32F4xx_HAL_Driver\Inc\Legacy;Drivers\CMSIS\Device\ST\STM32F4xx\Include;Drivers\CMSIS\Include;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_HAL_DRIVER;STM32F411xE;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Core\Inc;Drivers\STM32F4xx_HAL_Driver\Inc;Drivers\STM32F4xx_HAL_Driver\Inc\Legacy;Drivers\CMSIS\Device\ST\STM32F4xx\Include;Drivers\CMSIS\Include;Drivers/CMSIS/DSP/Include;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>USE_HAL_DRIVER;STM32F411xE;DEBUG=1;%(ClCompile.PreprocessorDefinitions);ARM_MATH_CM4;__FPU_PRESENT;__FPU_USED;__CC_ARM</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
       <CPPLanguageStandard />
@@ -51,7 +51,17 @@
     <Link>
       <AdditionalLinkerInputs>%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
       <AdditionalOptions />
+      <LinkerScript />
     </Link>
+    <KeilSettingsContainer>
+      <FloatABI>hard</FloatABI>
+    </KeilSettingsContainer>
+    <KeilSettingsContainer>
+      <ARMFPU>vfpv4-d16</ARMFPU>
+    </KeilSettingsContainer>
+    <KeilSettingsContainer>
+      <ARMCPU>cortex-m4</ARMCPU>
+    </KeilSettingsContainer>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
@@ -75,6 +85,7 @@
     <ClCompile Include="Core\Src\adxl345.c" />
     <ClCompile Include="Core\Src\bt.c" />
     <ClCompile Include="Core\Src\esp32.c" />
+    <ClCompile Include="Core\Src\filter.c" />
     <ClCompile Include="Core\Src\oled.c" />
     <ClCompile Include="Core\Src\wifi.c" />
     <ClCompile Include="MDK-ARM\startup_stm32f411xe.s" />
