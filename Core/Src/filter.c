@@ -21,6 +21,7 @@
  * 0.128770849454770242026313553651561960578  
  *****************************************/
 #define IIR_SECTION 2
+#define FILTER_STABILITY_TIME 80
 static float32_t iir_state[4*IIR_SECTION];
 static float32_t iir_coeffs[5*IIR_SECTION] = {
 	0.128770849454770242026313553651561960578, 0, -0.128770849454770242026313553651561960578, 1.957389039542623443423963180975988507271, -0.958531685182608117479219345113961026073,
@@ -35,12 +36,21 @@ pFilter ArmFilter = arm_biquad_cascade_df1_f32;
 
 #endif // USE_DF1_F32_2SEC
 
+static uint16_t i;
 
 
-
-void FilterInit(void)
+void FilterInit(float32_t acc)
 {
 	ArmBiquadInit(&S, IIR_SECTION, iir_coeffs, iir_state);
+	float32_t src[FILTER_STABILITY_TIME], dst[FILTER_STABILITY_TIME] = { 0 };
+	for (i = 0; i < FILTER_STABILITY_TIME; i++)
+	{
+		src[i] = acc;
+	}
+	ArmFilter(&S, src, dst, FILTER_STABILITY_TIME);
+	ArmFilter(&S, src, dst, FILTER_STABILITY_TIME);
+	ArmFilter(&S, src, dst, FILTER_STABILITY_TIME);
+	ArmFilter(&S, src, dst, FILTER_STABILITY_TIME);
 }
 
 void Filter(float32_t * pSrc, float32_t * pDst, uint32_t blockSize)

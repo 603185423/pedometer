@@ -28,6 +28,8 @@ extern "C" {
 	void OLED_ShowString(uint8_t x, uint8_t y, uint8_t *chr, OledCharSize Char_Size);
 	void OLED_ShowCHinese(uint8_t x,uint8_t y,uint8_t no);
 	void OledDisplayLine(uint8_t *str);
+	void OledShowStepCountNum(uint32_t stepNum);
+	void OledStepCountInit(void);
 
 
 #ifdef __cplusplus

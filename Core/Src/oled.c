@@ -2,6 +2,12 @@
 #include "i2c.h"
 #include "oledfont.h"
 
+#define OLED_STEP_CHAR_DISPLAY_POSITON_X 0
+#define OLED_STEP_CHAR_DISPLAY_POSITON_Y 0
+#define OLED_STEP_NUM_DISPLAY_POSITON_X 40
+#define OLED_STEP_NUM_DISPLAY_POSITON_Y 0
+
+
 
 
 
@@ -220,4 +226,13 @@ void OledDisplayLine(uint8_t *str)
 	if (lineNum == OLED_MAX_LINE_8SIZE) lineNum = 0;
 	OLED_ShowString(0, lineNum, str, OLED_CHAR_SIZE8);
 	++lineNum;
+}
+
+void OledStepCountInit(void)
+{
+	OLED_ShowString(OLED_STEP_CHAR_DISPLAY_POSITON_X, OLED_STEP_CHAR_DISPLAY_POSITON_Y, (uint8_t*)"STEP", OLED_CHAR_SIZE8);
+}
+void OledShowStepCountNum(uint32_t stepNum)
+{
+	OLED_ShowNum(OLED_STEP_NUM_DISPLAY_POSITON_X, OLED_STEP_NUM_DISPLAY_POSITON_Y, stepNum, 6, OLED_CHAR_SIZE8);
 }

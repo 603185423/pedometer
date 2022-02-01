@@ -183,5 +183,8 @@
     <ClCompile Include="Core\Src\filter.c">
       <Filter>Source files\Application\User\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Src\step.c">
+      <Filter>Source files\Application\User\Core</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

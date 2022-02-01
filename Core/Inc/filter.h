@@ -9,7 +9,7 @@ extern "C" {
 #include "arm_math.h"
 
 void Filter(float32_t * pSrc, float32_t * pDst, uint32_t blockSize);
-void FilterInit(void);
+void FilterInit(float32_t);
 	
 	
 #ifdef __cplusplus
