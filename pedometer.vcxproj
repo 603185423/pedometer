@@ -42,8 +42,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
-      <AdditionalIncludeDirectories>Core\Inc;Drivers\STM32F4xx_HAL_Driver\Inc;Drivers\STM32F4xx_HAL_Driver\Inc\Legacy;Drivers\CMSIS\Device\ST\STM32F4xx\Include;Drivers\CMSIS\Include;Drivers/CMSIS/DSP/Include;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_HAL_DRIVER;STM32F411xE;DEBUG=1;%(ClCompile.PreprocessorDefinitions);ARM_MATH_CM4;__FPU_PRESENT;__FPU_USED;__CC_ARM</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Drivers/CMSIS/DSP/Include;Core\Inc;Drivers\STM32F4xx_HAL_Driver\Inc;Drivers\STM32F4xx_HAL_Driver\Inc\Legacy;Drivers\CMSIS\Device\ST\STM32F4xx\Include;Drivers\CMSIS\Include;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEBUG=1;ARM_MATH_CM4;__FPU_PRESENT;__FPU_USED;__CC_ARM;$$com.sysprogs.bspoptions.primary_memory$$_layout;USE_HAL_DRIVER;STM32F411xE;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
       <CPPLanguageStandard />
@@ -66,7 +66,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <AdditionalIncludeDirectories>Core\Inc;Drivers\STM32F4xx_HAL_Driver\Inc;Drivers\STM32F4xx_HAL_Driver\Inc\Legacy;Drivers\CMSIS\Device\ST\STM32F4xx\Include;Drivers\CMSIS\Include;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_HAL_DRIVER;STM32F411xE;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;$$com.sysprogs.bspoptions.primary_memory$$_layout;USE_HAL_DRIVER;STM32F411xE;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
       <CPPLanguageStandard />
@@ -86,10 +86,9 @@
     <ClCompile Include="Core\Src\bt.c" />
     <ClCompile Include="Core\Src\esp32.c" />
     <ClCompile Include="Core\Src\filter.c" />
-    <ClCompile Include="Core\Src\oled.c" />
+    <ClCompile Include="Core\Src\oled12864.c" />
     <ClCompile Include="Core\Src\step.c" />
     <ClCompile Include="Core\Src\wifi.c" />
-    <ClCompile Include="MDK-ARM\startup_stm32f411xe.s" />
     <ClCompile Include="Core\Src\main.c" />
     <ClCompile Include="Core\Src\gpio.c" />
     <ClCompile Include="Core\Src\dma.c" />
@@ -117,10 +116,13 @@
     <ClCompile Include="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c" />
     <ClCompile Include="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.c" />
     <ClCompile Include="Core\Src\system_stm32f4xx.c" />
+    <ClCompile Include="MDK-ARM\startup_stm32f411xe.s" />
     <None Include="mcu.props" />
     <ClInclude Include="$(BSP_ROOT)\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" />
     <None Include="pedometer-Debug.vgdbsettings" />
     <None Include="pedometer-Release.vgdbsettings" />
     <None Include="MCU.xml" />
+    <ClCompile Include="Core\Src\spi.c" />
+    <ClCompile Include="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c" />
   </ItemGroup>
 </Project>

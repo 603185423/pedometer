@@ -66,9 +66,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MDK-ARM\startup_stm32f411xe.s">
-      <Filter>Source files\Application\MDK-ARM</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Src\main.c">
       <Filter>Source files\Application\User\Core</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
     <ClCompile Include="Core\Src\adxl345.c">
       <Filter>Source files\Application\User\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Src\oled.c">
-      <Filter>Source files\Application\User\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Src\wifi.c">
       <Filter>Source files\Application\User\Core</Filter>
     </ClCompile>
@@ -184,6 +178,18 @@
       <Filter>Source files\Application\User\Core</Filter>
     </ClCompile>
     <ClCompile Include="Core\Src\step.c">
+      <Filter>Source files\Application\User\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Src\spi.c">
+      <Filter>Source files\Application\User\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c">
+      <Filter>Source files\Drivers\STM32F4xx_HAL_Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="MDK-ARM\startup_stm32f411xe.s">
+      <Filter>Source files\Application\User\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Src\oled12864.c">
       <Filter>Source files\Application\User\Core</Filter>
     </ClCompile>
   </ItemGroup>

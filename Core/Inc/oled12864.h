@@ -1,5 +1,5 @@
-#ifndef __OLED_H__
-#define __OLED_H__
+#ifndef __OLED12864_H__
+#define __OLED12864_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,4 +36,4 @@ extern "C" {
 }
 #endif
 
-#endif /* __OLED_H__ */
+#endif /* __OLED12864_H__ */

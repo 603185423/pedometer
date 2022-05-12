@@ -3,7 +3,7 @@
 //#define ESP32_BT_DEBUG_USART2
 #define ESP32_BT_DEBUG_OLED
 #ifdef ESP32_BT_DEBUG_OLED
-#include "oled.h"
+//#include "oled.h"
 #endif // ESP32_BT_DEBUG_OLED
 
 

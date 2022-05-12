@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<EmbeddedProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<EmbeddedProfile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <ToolchainID>com.sysprogs.toolchains.nongnu.armcc</ToolchainID>
   <ToolchainVersion>
     <GCC>5.x</GCC>
@@ -27,7 +27,7 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>MDK-ARM\pedomt.uvprojx</RelativePath>
-        <Timestamp>132871586710368511</Timestamp>
+        <Timestamp>132942465150037034</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
@@ -37,11 +37,7 @@
           <Subdirectories>
             <VirtualDirectorySnapshot>
               <Name>MDK-ARM</Name>
-              <Files>
-                <VirtualFileSnapshot>
-                  <RelativePath>MDK-ARM\startup_stm32f411xe.s</RelativePath>
-                </VirtualFileSnapshot>
-              </Files>
+              <Files />
             </VirtualDirectorySnapshot>
             <VirtualDirectorySnapshot>
               <Name>User</Name>
@@ -60,6 +56,9 @@
                     </VirtualFileSnapshot>
                     <VirtualFileSnapshot>
                       <RelativePath>Core\Src\i2c.c</RelativePath>
+                    </VirtualFileSnapshot>
+                    <VirtualFileSnapshot>
+                      <RelativePath>Core\Src\spi.c</RelativePath>
                     </VirtualFileSnapshot>
                     <VirtualFileSnapshot>
                       <RelativePath>Core\Src\tim.c</RelativePath>
@@ -133,6 +132,9 @@
                   <RelativePath>Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_exti.c</RelativePath>
                 </VirtualFileSnapshot>
                 <VirtualFileSnapshot>
+                  <RelativePath>Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c</RelativePath>
+                </VirtualFileSnapshot>
+                <VirtualFileSnapshot>
                   <RelativePath>Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c</RelativePath>
                 </VirtualFileSnapshot>
                 <VirtualFileSnapshot>
@@ -169,6 +171,7 @@
             <string>Drivers\CMSIS\Include</string>
           </IncludeDirectories>
           <PreprocessorMacros>
+            <string>$$com.sysprogs.bspoptions.primary_memory$$_layout</string>
             <string>USE_HAL_DRIVER</string>
             <string>STM32F411xE</string>
           </PreprocessorMacros>

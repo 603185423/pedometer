@@ -20,6 +20,7 @@
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -29,7 +30,7 @@
 #include "esp32.h"
 #include "bt.h"
 #include "adxl345.h"
-#include "oled.h"
+#include "oled12864.h"
 #include "wifi.h"
 #include "filter.h"
 #include "step.h"
@@ -106,6 +107,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 	OLED_Init();
 	OledDisplayLine((uint8_t*)"oled init success");

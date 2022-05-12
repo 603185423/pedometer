@@ -1,4 +1,4 @@
-#include "oled.h"
+#include "oled12864.h"
 #include "i2c.h"
 #include "oledfont.h"
 
