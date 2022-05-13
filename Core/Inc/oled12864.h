@@ -30,6 +30,8 @@ extern "C" {
 	void OledDisplayLine(uint8_t *str);
 	void OledShowStepCountNum(uint32_t stepNum);
 	void OledStepCountInit(void);
+	void OledHeartrateInit(void);
+	void OledShowHeartrateCountNum(uint32_t heartrateNum);
 
 
 #ifdef __cplusplus

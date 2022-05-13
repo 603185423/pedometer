@@ -34,6 +34,7 @@
 #include "wifi.h"
 #include "filter.h"
 #include "step.h"
+#include "max30102.h"
 
 #include "arm_math.h"
 /* USER CODE END Includes */
@@ -60,6 +61,8 @@ static uint8_t i = 0;
 static uint32_t stepNum = 0;
 static float32_t f = 0;
 static WifiDataPack_3AxisAccWithTotal acc;
+static uint16_t heartRate = 0;
+static BtDataPack_3AxisAccWithTotal pdata_3Acc;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,14 +116,18 @@ int main(void)
 	OledDisplayLine((uint8_t*)"oled init success");
 	ADXL345_Init();
 	OledDisplayLine((uint8_t*)"adxl345 init success");
+	HeartRateInit();
+	OledDisplayLine((uint8_t*)"heartrate init success");
 	HAL_Delay(5000); //wating esp32 init
-	WifiInit();
+	//WifiInit();
+	BtInit();
 	OledDisplayLine((uint8_t*)"bt init success");
 	ADXL345_RD_XYZ(&(acc.x), &(acc.y), &(acc.z));
 	acc.f = (float)sqrt((double)acc.x*acc.x + (double)acc.y*acc.y + (double)acc.z*acc.z);
 	FilterInit(acc.f);
 	OLED_Clear();
 	OledStepCountInit();
+	OledHeartrateInit();
 
 	HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
@@ -130,6 +137,8 @@ int main(void)
 	while (1)
 	{
 		OledShowStepCountNum(stepNum);
+		OledShowHeartrateCountNum(heartRate);
+		HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -193,7 +202,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		acc.f = (float)sqrt((double)acc.x*acc.x + (double)acc.y*acc.y + (double)acc.z*acc.z);
 		Filter(&(acc.f), &f, 1);
 		stepNum += StepCount(&f);
-		WifiSendDataPack_MixedAcc(&(f));
+		//heartRate = GetHeartrate();
+		
+		//WifiSendDataPack_MixedAcc(&(f));
+		pdata_3Acc.x = 0;
+		pdata_3Acc.y = 0;
+		pdata_3Acc.z = 0;
+		pdata_3Acc.f = GetHeartWaveWithFilter();
+		BtSendDatapack_3AxisAccWithTotal(&pdata_3Acc);
 	}
 }
 /* USER CODE END 4 */

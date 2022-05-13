@@ -45,6 +45,7 @@ void BtSendDatapack_3AxisAccWithTotal(BtDataPack_3AxisAccWithTotal *pdata_3Acc)
 
 void BtInit(void)
 {
+	esp32WirelessUse = USE_BLUETOOTH;
 	Esp32Init();
 	Esp32BtWaitingConnect();
 	Esp32BtSppSendMode();

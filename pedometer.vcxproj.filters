@@ -192,5 +192,11 @@
     <ClCompile Include="Core\Src\oled12864.c">
       <Filter>Source files\Application\User\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Src\max30102.c">
+      <Filter>Source files\Application\User\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Src\filter_hr.c">
+      <Filter>Source files\Application\User\Core</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
