@@ -198,5 +198,8 @@
     <ClCompile Include="Core\Src\filter_hr.c">
       <Filter>Source files\Application\User\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Src\heartrate.c">
+      <Filter>Source files\Application\User\Core</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -70,7 +70,7 @@ void MAX30102_Init()
 	MAX30102_Write(MAX30102_REG_SPO2_CONFIG, 0x27); // SPO2_ADC range = 4096nA, SPO2 sample rate (100 Hz), LED pulseWidth (400uS)
 	MAX30102_Write(MAX30102_REG_LED1_PA, 0x24); //Choose value for ~ 7mA for LED1
 	MAX30102_Write(MAX30102_REG_LED2_PA, 0x24); // Choose value for ~ 7mA for LED2
-	MAX30102_Write(MAX30102_REG_PILOT_PA, 0x7f); // Choose value for ~ 25mA for Pilot LED
+	MAX30102_Write(MAX30102_REG_PILOT_PA, 0x01); // Choose value for ~ 25mA for Pilot LED
 }
 
 void MAX30102_Read_Fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led)

@@ -87,6 +87,7 @@
     <ClCompile Include="Core\Src\esp32.c" />
     <ClCompile Include="Core\Src\filter.c" />
     <ClCompile Include="Core\Src\filter_hr.c" />
+    <ClCompile Include="Core\Src\heartrate.c" />
     <ClCompile Include="Core\Src\max30102.c" />
     <ClCompile Include="Core\Src\oled12864.c" />
     <ClCompile Include="Core\Src\step.c" />
