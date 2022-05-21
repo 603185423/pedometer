@@ -258,3 +258,49 @@ void OledShowHeartrateCountNum(uint32_t heartrateNum)
 	if (heartrateNum == lastHeartrate)return;		
 	OLED_ShowNum(OLED_HEARTRATE_NUM_DISPLAY_POSITON_X, OLED_HEARTRATE_NUM_DISPLAY_POSITON_Y, heartrateNum, 6, OLED_CHAR_SIZE8);
 }
+
+void DrawOneHeartrateWave(uint8_t pos, uint8_t num)
+{
+	static uint8_t line = 0;
+	static uint8_t i = 0;
+	line = 7 - (num >> 3);
+	num &= 0b0111;
+	num = 0b10000000 >> num;
+	for (i = 4; i < 8; i++)
+	{
+		OLED_Set_Pos(pos, i);
+		if (line == i)
+		{
+			OLED_WR_DATA(num);
+		}
+		else
+		{
+			OLED_WR_DATA(0x00);
+		}
+	}
+}
+
+void DrawHeartrateEndLine(uint8_t pos)
+{
+	OLED_Set_Pos(pos, 4);
+	OLED_WR_DATA(0xFF);
+	OLED_Set_Pos(pos, 5);
+	OLED_WR_DATA(0xFF);
+	OLED_Set_Pos(pos, 6);
+	OLED_WR_DATA(0xFF);
+	OLED_Set_Pos(pos, 7);
+	OLED_WR_DATA(0xFF);
+}
+
+void OledDisplayHeartrateWave(uint8_t heartrate)
+{
+	static uint8_t pos = 0;
+	if (pos == 128)pos = 0;
+	if (heartrate>159)heartrate=159;
+	else if (heartrate<32)heartrate=32;
+	heartrate -= 32;
+	heartrate = heartrate >> 2;
+	DrawOneHeartrateWave(pos, heartrate);
+	DrawHeartrateEndLine(pos + 1);
+	++pos;
+}

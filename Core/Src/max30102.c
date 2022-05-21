@@ -68,9 +68,9 @@ void MAX30102_Init()
 	MAX30102_Write(MAX30102_REG_FIFO_CONFIG, 0x0f); //sample avg = 1, fifo rollover=false, fifo almost full = 17
 	MAX30102_Write(MAX30102_REG_MODE_CONFIG, 0x03); //0x02 for Red only, 0x03 for SpO2 mode 0x07 multimode LED
 	MAX30102_Write(MAX30102_REG_SPO2_CONFIG, 0x27); // SPO2_ADC range = 4096nA, SPO2 sample rate (100 Hz), LED pulseWidth (400uS)
-	MAX30102_Write(MAX30102_REG_LED1_PA, 0x24); //Choose value for ~ 7mA for LED1
-	MAX30102_Write(MAX30102_REG_LED2_PA, 0x24); // Choose value for ~ 7mA for LED2
-	MAX30102_Write(MAX30102_REG_PILOT_PA, 0x01); // Choose value for ~ 25mA for Pilot LED
+	MAX30102_Write(MAX30102_REG_LED1_PA, 0x10); //Choose value for ~ 7mA for LED1
+	MAX30102_Write(MAX30102_REG_LED2_PA, 0x10); // Choose value for ~ 7mA for LED2
+	MAX30102_Write(MAX30102_REG_PILOT_PA, 0x1F); // Choose value for ~ 25mA for Pilot LED
 }
 
 void MAX30102_Read_Fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led)
@@ -115,8 +115,8 @@ void MAX30102_Read_Fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led)
 	*pun_ir_led += un_temp;
 	un_temp = (unsigned char) ach_i2c_data[5];
 	*pun_ir_led += un_temp;
-	*pun_red_led &= 0x03FFFF; //Mask MSB [23:18]
-	*pun_ir_led &= 0x03FFFF; //Mask MSB [23:18]
+	//*pun_red_led &= 0x03FFFF; //Mask MSB [23:18]
+	//*pun_ir_led &= 0x03FFFF; //Mask MSB [23:18]
   
   
 }
@@ -143,9 +143,12 @@ void MAX30102_Read_Fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led)
 
 float GetHeartWave()
 {
-	uint32_t red_led, ir_led;
+	static uint32_t red_led, ir_led;
+	static float32_t res;
 	MAX30102_Read_Fifo(&red_led, &ir_led);
-	return (float)(red_led >> 2);
+	//red_led = red_led >> 4;
+	res = (float)red_led;
+	return res;
 }
 
 float GetHeartWaveWithFilter()

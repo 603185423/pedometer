@@ -59,12 +59,15 @@
 
 /* USER CODE BEGIN PV */
 static uint8_t i = 0;
+static uint16_t d = 0;
 static uint32_t stepNum = 0;
 static float32_t f = 0;
 static float32_t hw = 0;
 static WifiDataPack_3AxisAccWithTotal acc;
 static uint16_t heartRate = 0;
 static BtDataPack_3AxisAccWithTotal pdata_3Acc;
+
+static uint16_t data_hr[] = { 88, 92, 100, 92, 98, 92, 92, 93, 92, 96, 92, 96, 93, 96, 86, 96, 90, 92, 96, 92, 93, 88, 90, 85, 92, 88, 96, 93, 96, 89, 89, 95, 90, 92, 85, 88, 88, 88, 92, 166, 98, 92, 86, 85, 90, 90, 90, 90, 86, 92, 96, 85, 85, 92, 88, 92, 93, 90, 93, 92, 92, 93, 93, 93, 90, 86, 90, 90, 181, 86, 90, 92, 92, 93, 96, 96, 92, 88, 90, 98, 93, 96, 96, 98, 90, 93, 46, 93, 92, 92, 93, 93, 88, 88, 88, 92, 90, 96, 90, 92, 95, 88, 88, 30, 93, 93, 92, 92, 85, 88, 88, 92, 93, 93, 92, 93, 88, 93, 93, 93, 93, 96, 93, 93, 93, 93, 86, 93, 88, 93, 89, 88, 90, 90, 92, 93, 46, 93, 92, 92, 93, 93, 88, 88, 88, 92, 90, 96, 90, 92, 95 };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -119,8 +122,8 @@ int main(void)
 	ADXL345_Init();
 	OledDisplayLine((uint8_t*)"adxl345 init success");
 	
-	HAL_Delay(5000); //wating esp32 init
-	esp32WirelessUse = USE_BLUETOOTH;
+	HAL_Delay(1000); //wating esp32 init
+	esp32WirelessUse = USE_WIFI;
 	if (esp32WirelessUse == USE_BLUETOOTH)BtInit();
 	else if (esp32WirelessUse == USE_WIFI)WifiInit();
 	else OledDisplayLine((uint8_t*)"no wireless");
@@ -134,6 +137,7 @@ int main(void)
 
 	HeartRateInit();
 	HAL_TIM_Base_Start_IT(&htim3);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -142,6 +146,14 @@ int main(void)
 	{
 		OledShowStepCountNum(stepNum);
 		OledShowHeartrateCountNum(heartRate);
+		if (i == 10)
+		{
+			OledDisplayHeartrateWave(d+30);
+			d++;
+			i = 0;
+			if (d > 130)d = 0;
+		}
+		i++;
 		HAL_Delay(100);
     /* USER CODE END WHILE */
 
@@ -216,7 +228,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			pdata_3Acc.x = acc.x;
 			pdata_3Acc.y = acc.y;
 			pdata_3Acc.z = acc.z;
-			pdata_3Acc.f = hw;
+			pdata_3Acc.f = f;
 			BtSendDatapack_3AxisAccWithTotal(&pdata_3Acc);
 		}
 		else if (esp32WirelessUse == USE_WIFI)

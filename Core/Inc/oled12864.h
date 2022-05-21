@@ -32,6 +32,7 @@ extern "C" {
 	void OledStepCountInit(void);
 	void OledHeartrateInit(void);
 	void OledShowHeartrateCountNum(uint32_t heartrateNum);
+	void OledDisplayHeartrateWave(uint8_t heartrate);
 
 
 #ifdef __cplusplus
