@@ -121,9 +121,39 @@ int main(void)
 	OledDisplayLine((uint8_t*)"oled init success");
 	ADXL345_Init();
 	OledDisplayLine((uint8_t*)"adxl345 init success");
-	
-	HAL_Delay(1000); //wating esp32 init
-	esp32WirelessUse = USE_WIFI;
+
+	esp32WirelessUse = NO_WIRELESS;
+	OLED_ShowString(0, 3, (uint8_t*)"no wireless mode", OLED_CHAR_SIZE8);
+	for (i = 0; i < 50; i++)//select wireless mode and wating esp32 init
+	{
+		if (HAL_GPIO_ReadPin(wirelessSelect_GPIO_Port, wirelessSelect_Pin) == GPIO_PIN_RESET)
+		{
+			HAL_Delay(10);
+			if (HAL_GPIO_ReadPin(wirelessSelect_GPIO_Port, wirelessSelect_Pin) == GPIO_PIN_RESET)
+			{
+				if (esp32WirelessUse == NO_WIRELESS)
+				{
+					esp32WirelessUse = USE_BLUETOOTH;
+					OLED_ShowString(0, 3, (uint8_t*)"bluetooth mode  ", OLED_CHAR_SIZE8);
+				}
+				else if (esp32WirelessUse == USE_BLUETOOTH)
+				{
+					esp32WirelessUse = USE_WIFI;
+					OLED_ShowString(0, 3, (uint8_t*)"wifi mode       ", OLED_CHAR_SIZE8);
+				}
+				else if (esp32WirelessUse == USE_WIFI)
+				{
+					esp32WirelessUse = NO_WIRELESS;
+					OLED_ShowString(0, 3, (uint8_t*)"no wireless mode", OLED_CHAR_SIZE8);
+				}
+				HAL_Delay(10);
+				while((HAL_GPIO_ReadPin(wirelessSelect_GPIO_Port, wirelessSelect_Pin) == GPIO_PIN_RESET))HAL_Delay(100);
+			}
+			
+		}
+		HAL_Delay(100);
+	}
+	i = 0;
 	if (esp32WirelessUse == USE_BLUETOOTH)BtInit();
 	else if (esp32WirelessUse == USE_WIFI)WifiInit();
 	else OledDisplayLine((uint8_t*)"no wireless");
