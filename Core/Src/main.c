@@ -116,6 +116,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
   MX_SPI1_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
 	OLED_Init();
 	OledDisplayLine((uint8_t*)"oled init success");
@@ -250,7 +251,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		Filter(&(acc.f), &f, 1);
 		stepNum += StepCount(&f);
 		
-		hw = GetHeartWave();
+		hw = GetHeartWaveWithFilter();
 		heartRate += HeartrateCount(&hw);
 		
 		if (esp32WirelessUse == USE_BLUETOOTH)
@@ -258,7 +259,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			pdata_3Acc.x = acc.x;
 			pdata_3Acc.y = acc.y;
 			pdata_3Acc.z = acc.z;
-			pdata_3Acc.f = f;
+			pdata_3Acc.f = hw;
 			BtSendDatapack_3AxisAccWithTotal(&pdata_3Acc);
 		}
 		else if (esp32WirelessUse == USE_WIFI)

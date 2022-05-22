@@ -15,22 +15,22 @@ int32_t n_ir_buffer_length=500; //data length
 
 void MAX30102_Write(uint16_t MemAddress, uint8_t data)
 {
-	HAL_I2C_Mem_Write(&hi2c1, MAX30102_DEV_ADDRESS_WR, MemAddress, I2C_MEMADD_SIZE_8BIT, &data, 1, MAX30102_TIMEOUT_WR);
+	HAL_I2C_Mem_Write(&hi2c2, MAX30102_DEV_ADDRESS_WR, MemAddress, I2C_MEMADD_SIZE_8BIT, &data, 1, MAX30102_TIMEOUT_WR);
 }
 
 void MAX30102_Read(uint16_t MemAddress, uint8_t *data)
 {
-	HAL_I2C_Mem_Read(&hi2c1, MAX30102_DEV_ADDRESS_RD, MemAddress, I2C_MEMADD_SIZE_8BIT, data, 1, MAX30102_TIMEOUT_RD);
+	HAL_I2C_Mem_Read(&hi2c2, MAX30102_DEV_ADDRESS_RD, MemAddress, I2C_MEMADD_SIZE_8BIT, data, 1, MAX30102_TIMEOUT_RD);
 }
 
 void MAX30102_Writes(uint16_t MemAddress, uint8_t data, uint16_t size)
 {
-	HAL_I2C_Mem_Write(&hi2c1, MAX30102_DEV_ADDRESS_WR, MemAddress, I2C_MEMADD_SIZE_8BIT, &data, size, MAX30102_TIMEOUT_WR);
+	HAL_I2C_Mem_Write(&hi2c2, MAX30102_DEV_ADDRESS_WR, MemAddress, I2C_MEMADD_SIZE_8BIT, &data, size, MAX30102_TIMEOUT_WR);
 }
 
 void MAX30102_Reads(uint16_t MemAddress, uint8_t *data, uint16_t size)
 {
-	HAL_I2C_Mem_Read(&hi2c1, MAX30102_DEV_ADDRESS_RD, MemAddress, I2C_MEMADD_SIZE_8BIT, data, size, MAX30102_TIMEOUT_RD);
+	HAL_I2C_Mem_Read(&hi2c2, MAX30102_DEV_ADDRESS_RD, MemAddress, I2C_MEMADD_SIZE_8BIT, data, size, MAX30102_TIMEOUT_RD);
 }
 
 /**
@@ -68,12 +68,12 @@ void MAX30102_Init()
 	MAX30102_Write(MAX30102_REG_FIFO_CONFIG, 0x0f); //sample avg = 1, fifo rollover=false, fifo almost full = 17
 	MAX30102_Write(MAX30102_REG_MODE_CONFIG, 0x03); //0x02 for Red only, 0x03 for SpO2 mode 0x07 multimode LED
 	MAX30102_Write(MAX30102_REG_SPO2_CONFIG, 0x27); // SPO2_ADC range = 4096nA, SPO2 sample rate (100 Hz), LED pulseWidth (400uS)
-	MAX30102_Write(MAX30102_REG_LED1_PA, 0x10); //Choose value for ~ 7mA for LED1
-	MAX30102_Write(MAX30102_REG_LED2_PA, 0x10); // Choose value for ~ 7mA for LED2
+	MAX30102_Write(MAX30102_REG_LED1_PA, 0x32); //Choose value for ~ 7mA for LED1
+	MAX30102_Write(MAX30102_REG_LED2_PA, 0x32); // Choose value for ~ 7mA for LED2
 	MAX30102_Write(MAX30102_REG_PILOT_PA, 0x1F); // Choose value for ~ 25mA for Pilot LED
 }
 
-void MAX30102_Read_Fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led)
+void MAX30102_Read_Fifo(uint16_t *pun_red_led, uint16_t *pun_ir_led)
 /**
 * \brief        Read a set of samples from the MAX30102 FIFO register
 * \par          Details
@@ -85,7 +85,7 @@ void MAX30102_Read_Fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led)
 * \retval       true on success
 */
 {
-	uint32_t un_temp;
+	uint16_t un_temp;
 	unsigned char uch_temp;
 	*pun_red_led = 0;
 	*pun_ir_led = 0;
@@ -99,21 +99,23 @@ void MAX30102_Read_Fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led)
 	ach_i2c_data[0] = MAX30102_REG_FIFO_DATA;
 	MAX30102_Reads(MAX30102_REG_FIFO_DATA, ach_i2c_data, 6);
 	un_temp = (unsigned char) ach_i2c_data[0];
-	un_temp <<= 16;
+	un_temp <<= 14;
 	*pun_red_led += un_temp;
 	un_temp = (unsigned char) ach_i2c_data[1];
-	un_temp <<= 8;
+	un_temp <<= 6;
 	*pun_red_led += un_temp;
 	un_temp = (unsigned char) ach_i2c_data[2];
+	un_temp >>= 2;
 	*pun_red_led += un_temp;
   
 	un_temp = (unsigned char) ach_i2c_data[3];
-	un_temp <<= 16;
+	un_temp <<= 14;
 	*pun_ir_led += un_temp;
 	un_temp = (unsigned char) ach_i2c_data[4];
-	un_temp <<= 8;
+	un_temp <<= 6;
 	*pun_ir_led += un_temp;
 	un_temp = (unsigned char) ach_i2c_data[5];
+	un_temp >>= 2;
 	*pun_ir_led += un_temp;
 	//*pun_red_led &= 0x03FFFF; //Mask MSB [23:18]
 	//*pun_ir_led &= 0x03FFFF; //Mask MSB [23:18]
@@ -143,11 +145,18 @@ void MAX30102_Read_Fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led)
 
 float GetHeartWave()
 {
-	static uint32_t red_led, ir_led;
+	static uint16_t red_led, ir_led;
 	static float32_t res;
-	MAX30102_Read_Fifo(&red_led, &ir_led);
-	//red_led = red_led >> 4;
-	res = (float)red_led;
+	//if (HAL_GPIO_ReadPin(MAX_INT1_GPIO_Port, MAX_INT1_Pin) == GPIO_PIN_RESET)
+	{
+		MAX30102_Read_Fifo(&red_led, &ir_led);
+		//red_led = red_led >> 4;
+		res = (float)red_led;
+//		if (red_led > 30000)
+//		{
+//			res = (float)red_led;
+//		}
+	}
 	return res;
 }
 
