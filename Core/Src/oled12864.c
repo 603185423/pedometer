@@ -255,6 +255,7 @@ void OledShowStepCountNum(uint32_t stepNum)
 void OledShowHeartrateCountNum(uint32_t heartrateNum)
 {
 	static uint32_t lastHeartrate = 0;
+	if (!heartrateNum)return;
 	if (heartrateNum == lastHeartrate)return;		
 	OLED_ShowNum(OLED_HEARTRATE_NUM_DISPLAY_POSITON_X, OLED_HEARTRATE_NUM_DISPLAY_POSITON_Y, heartrateNum, 6, OLED_CHAR_SIZE8);
 }

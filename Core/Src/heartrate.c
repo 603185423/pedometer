@@ -63,3 +63,24 @@ uint8_t HeartrateCount(float* acc)
 	return 0;
 }
 
+uint16_t CalcHeartrate(float *acc)
+{
+	static uint8_t countHt = 0;
+	static uint32_t htStartTick;
+	static uint32_t htDeltaTick;
+	if (HeartrateCount(acc))
+	{
+		if (!countHt) htStartTick = HR_tick;
+		if (countHt == 4)
+		{
+			htDeltaTick = HR_tick - htStartTick;
+			countHt = 1;
+			htStartTick = HR_tick;
+			return 60 * 4 * 100 / htDeltaTick;
+		}
+		
+		++countHt;
+	}
+	return 0;
+}
+

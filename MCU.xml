@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<EmbeddedProfile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<EmbeddedProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ToolchainID>com.sysprogs.toolchains.nongnu.armcc</ToolchainID>
   <ToolchainVersion>
     <GCC>5.x</GCC>
@@ -27,7 +27,7 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>MDK-ARM\pedomt.uvprojx</RelativePath>
-        <Timestamp>132942465150037034</Timestamp>
+        <Timestamp>132976730337987668</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>

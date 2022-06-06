@@ -176,15 +176,14 @@ int main(void)
 	while (1)
 	{
 		OledShowStepCountNum(stepNum);
-		OledShowHeartrateCountNum(heartRate);
-		if (i == 10)
-		{
-			OledDisplayHeartrateWave(d+30);
-			d++;
-			i = 0;
-			if (d > 130)d = 0;
-		}
-		i++;
+//		if (i == 10)
+//		{
+//			OledDisplayHeartrateWave(d+30);
+//			d++;
+//			i = 0;
+//			if (d > 130)d = 0;
+//		}
+//		i++;
 		HAL_Delay(100);
     /* USER CODE END WHILE */
 
@@ -252,14 +251,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		stepNum += StepCount(&f);
 		
 		hw = GetHeartWaveWithFilter();
-		heartRate += HeartrateCount(&hw);
+		heartRate = CalcHeartrate(&hw);
+		if (heartRate)
+		{
+			OledShowHeartrateCountNum(heartRate);
+			OledDisplayHeartrateWave(heartRate);
+		}
 		
 		if (esp32WirelessUse == USE_BLUETOOTH)
 		{
 			pdata_3Acc.x = acc.x;
 			pdata_3Acc.y = acc.y;
-			pdata_3Acc.z = acc.z;
-			pdata_3Acc.f = hw;
+			pdata_3Acc.z = hw;
+			pdata_3Acc.f = f;
 			BtSendDatapack_3AxisAccWithTotal(&pdata_3Acc);
 		}
 		else if (esp32WirelessUse == USE_WIFI)

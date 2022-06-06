@@ -8,6 +8,7 @@ extern "C" {
 #include "main.h"
 	
 	uint8_t HeartrateCount(float* acc);
+	uint16_t CalcHeartrate(float *acc);
 	
 	
 	
